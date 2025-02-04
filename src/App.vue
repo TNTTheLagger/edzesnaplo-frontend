@@ -1,47 +1,68 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div class="app-container">
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-md-6">
+          <UjGyakorlat @ujGyakorlat="rogzitGyakorlat" />
+        </div>
+        <div class="col-md-6">
+          <Listaz :gyakorlatok="gyakorlatok" />
+        </div>
+      </div>
     </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  </div>
 </template>
 
+<script>
+import UjGyakorlat from './components/UjGyakorlat.vue';
+import Listaz from './components/Listaz.vue';
+import { API_HOST } from './config';
+
+export default {
+  components: { UjGyakorlat, Listaz },
+  data() {
+    return {
+      gyakorlatok: []
+    };
+  },
+  methods: {
+    async rogzitGyakorlat(gyakorlat) {
+      try {
+        const response = await fetch(API_HOST, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(gyakorlat),
+        });
+
+        const data = await response.json();
+        alert(data.message);
+        this.fetchData();
+      } catch (error) {
+        console.error('Hiba történt:', error);
+      }
+    },
+    async fetchData() {
+      try {
+        const response = await fetch(API_HOST);
+        this.gyakorlatok = await response.json();
+      } catch (error) {
+        console.error('Hiba történt az adatok lekérésekor:', error);
+      }
+    }
+  },
+  created() {
+    this.fetchData();
+  }
+};
+</script>
+
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.app-container {
+  background: url('@/assets/background.png');
+  background-size: auto;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
