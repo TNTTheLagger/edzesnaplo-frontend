@@ -1,1 +1,1 @@
-export const API_HOST = 'http://localhost:8000/api/edzesnaplo';
+export const API_HOST = '/api/edzesnaplo/';
